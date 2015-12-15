@@ -45,7 +45,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->filesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     ui->graphicsView->setScene(&m_scene);
-    m_scene.addPixmap(QPixmap::fromImage(readPCX("level.pcx")));
+
+    //Reading the palette which according to docs should be the same for everything.
+    readPCXpalette("level.pcx");
+//    m_scene.addPixmap(QPixmap::fromImage(readPCXimage("level.pcx")));
 
     m_scene.setBackgroundBrush(QBrush(Qt::magenta));
 }
@@ -55,14 +58,31 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QImage MainWindow::readPCX(const QString &name)
+void MainWindow::readPCXpalette(const QString &name)
+{
+    int pcxOffset = m_datHeader.value(name).offset + m_datHeader.value(name).size - 768;
+    int paletteIndex = 0;
+    QRgb paletteItem;
+    while (paletteIndex < 256)
+    {
+        paletteItem  =                                   (0xFF << 24);
+        paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 16);
+        paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 8);
+        paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 0);
+        m_colorTable[paletteIndex++] = paletteItem;
+    }
+    qDebug() << paletteIndex;
+}
+
+QImage MainWindow::readPCXimage(const QString &name)
 {
     QImage image(400, 256, QImage::Format_Indexed8); // As described in modify.txt.
 
-    // Reading the level image
-    uchar *levelImage = image.bits();
-    uchar currentByte, fillerByte;
-    int pcxOffset=m_datHeader.value(name).offset+128, levelImageOffset=0;
+    uint8_t *levelImage = image.bits();
+    uint8_t currentByte;
+    uint8_t fillerByte;
+    int pcxOffset = m_datHeader.value(name).offset + 128;
+    int levelImageOffset = 0;
 
     while (levelImageOffset < 400*256) {
         currentByte = m_datContents.at(pcxOffset++);
@@ -78,20 +98,6 @@ QImage MainWindow::readPCX(const QString &name)
         } else {
             levelImage[levelImageOffset++] = currentByte;
         }
-    }
-
-    //Reading the image palette
-    pcxOffset++; // Skipping the palette "header"
-    int paletteIndex=0;
-    QRgb paletteItem;
-    uchar *colorComponent=reinterpret_cast<uchar*>(&paletteItem);
-    while (paletteIndex < 256)
-    {
-        *(colorComponent+3) = 0xFF;
-        *(colorComponent+2) = m_datContents.at(pcxOffset++);
-        *(colorComponent+1) = m_datContents.at(pcxOffset++);
-        *(colorComponent+0) = m_datContents.at(pcxOffset++);
-        m_colorTable[paletteIndex++] = paletteItem;
     }
 
     image.setColorTable(m_colorTable);
@@ -140,20 +146,18 @@ QImage MainWindow::readGobImage(const GobImage &gobImage)
 void MainWindow::on_filesTable_cellClicked(int row, int column)
 {
     QString resourceName = ui->filesTable->item(row, 0)->text();
+    QRectF boundingBox;
     m_scene.clear();
 
     if(resourceName.endsWith(".pcx")) {
-        QGraphicsPixmapItem *item = m_scene.addPixmap(QPixmap::fromImage(readPCX(resourceName)));
-        m_scene.setSceneRect(item->boundingRect());
-        ui->graphicsView->setZoom(1.0);
-        ui->graphicsView->centerOn(item);
+        QGraphicsPixmapItem *item = m_scene.addPixmap(QPixmap::fromImage(readPCXimage(resourceName)));
+        boundingBox = item->boundingRect();
     }
 
     if(resourceName.endsWith(".gob")) {
         std::vector<GobImage> gobImages = readGOB(resourceName);
 
         QPointF coordinates;
-        QRectF boundingBox;
         for(const GobImage &gobImage : gobImages) {
             QGraphicsPixmapItem *item = m_scene.addPixmap( QPixmap::fromImage(readGobImage(gobImage)) );
             item->setPos(coordinates);
@@ -164,22 +168,27 @@ void MainWindow::on_filesTable_cellClicked(int row, int column)
             boundingBox.setBottom( qMax( boundingBox.bottom(), item->boundingRect().bottom() ) );
             m_scene.addRect(itemBB, QPen(QColor(127, 127, 127, 200)));
         }
-
-        m_scene.setSceneRect(boundingBox);
-        ui->graphicsView->setZoom(1.0);
-        ui->graphicsView->centerOn(boundingBox.center());
     }
+
+    m_scene.setSceneRect(boundingBox);
+    ui->graphicsView->setZoom(1.0);
+    ui->graphicsView->centerOn(boundingBox.center());
 }
 
 uint16_t MainWindow::readUint16(uint32_t &offset)
 {
-    return (uint8_t(m_datContents.at(offset++)) << 0) + (uint8_t(m_datContents.at(offset++)) << 8);
+    uint16_t result;
+    result  = (uint8_t(m_datContents.at(offset++)) << 0);
+    result += (uint8_t(m_datContents.at(offset++)) << 8);
+    return result;
 }
 
 uint32_t MainWindow::readUint32(uint32_t &offset)
 {
-    return (uint8_t(m_datContents.at(offset++)) << 0)
-            + (uint8_t(m_datContents.at(offset++)) << 8)
-            + (uint8_t(m_datContents.at(offset++)) << 16)
-            + (uint8_t(m_datContents.at(offset++)) << 24);
+    uint32_t result;
+    result  = (uint8_t(m_datContents.at(offset++)) << 0);
+    result += (uint8_t(m_datContents.at(offset++)) << 8);
+    result += (uint8_t(m_datContents.at(offset++)) << 16);
+    result += (uint8_t(m_datContents.at(offset++)) << 24);
+    return result;
 }

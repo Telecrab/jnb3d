@@ -64,7 +64,8 @@ private:
     uint16_t readUint16(uint32_t &offset);
     uint32_t readUint32(uint32_t &offset);
 
-    QImage readPCX(const QString &name);
+    QImage readPCXimage(const QString &name);
+    void readPCXpalette(const QString &name);
     std::vector<GobImage> readGOB(const QString &name);
     QImage readGobImage(const GobImage &gobImage);
 
