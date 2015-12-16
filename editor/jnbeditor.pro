@@ -12,11 +12,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         resourceview.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    imageitem.cpp
 
 HEADERS  += \
         resourceview.h \
-    mainwindow.h
+    mainwindow.h \
+    imageitem.h
 
 FORMS    += \
     mainwindow.ui

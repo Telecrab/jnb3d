@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QGraphicsTextItem>
 #include <QWheelEvent>
+#include "imageitem.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -150,7 +151,8 @@ void MainWindow::on_filesTable_cellClicked(int row, int column)
     m_scene.clear();
 
     if(resourceName.endsWith(".pcx")) {
-        QGraphicsPixmapItem *item = m_scene.addPixmap(QPixmap::fromImage(readPCXimage(resourceName)));
+        ImageItem *item = new ImageItem(readPCXimage(resourceName));
+        m_scene.addItem(item);
         boundingBox = item->boundingRect();
     }
 
@@ -159,7 +161,8 @@ void MainWindow::on_filesTable_cellClicked(int row, int column)
 
         QPointF coordinates;
         for(const GobImage &gobImage : gobImages) {
-            QGraphicsPixmapItem *item = m_scene.addPixmap( QPixmap::fromImage(readGobImage(gobImage)) );
+            ImageItem *item = new ImageItem(readGobImage(gobImage));
+            m_scene.addItem(item);
             item->setPos(coordinates);
             coordinates.rx() += gobImage.width() + 2;
 
