@@ -37,9 +37,21 @@ MainWindow::MainWindow(QWidget *parent)
     ui->filesTable->setRowCount(m_datHeader.size());
     while (i.hasNext()) {
         i.next();
-        ui->filesTable->setItem(row, 0, new QTableWidgetItem(i.key()));
-        ui->filesTable->setItem(row, 1, new QTableWidgetItem(QString("%1").arg(i.value().offset)));
-        ui->filesTable->setItem(row, 2, new QTableWidgetItem(QString("%1").arg(i.value().size)));
+
+        Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
+
+        QTableWidgetItem * item = new QTableWidgetItem(i.key());
+        item->setFlags(flags | Qt::ItemIsEditable);
+        ui->filesTable->setItem(row, 0, item);
+
+        item = new QTableWidgetItem(QString("%1").arg(i.value().offset));
+        item->setFlags(flags);
+        ui->filesTable->setItem(row, 1, item);
+
+        item =  new QTableWidgetItem(QString("%1").arg(i.value().size));
+        item->setFlags(flags);
+        ui->filesTable->setItem(row, 2, item);
+
         row++;
     }
     ui->filesTable->sortByColumn(0, Qt::AscendingOrder);
@@ -144,9 +156,9 @@ QImage MainWindow::readGobImage(const GobImage &gobImage)
     return result;
 }
 
-void MainWindow::on_filesTable_cellClicked(int row, int column)
+void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
-    QString resourceName = ui->filesTable->item(row, 0)->text();
+    QString resourceName = ui->filesTable->item(currentRow, 0)->text();
     QRectF boundingBox;
     m_scene.clear();
 

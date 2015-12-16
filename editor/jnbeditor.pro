@@ -13,15 +13,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         resourceview.cpp \
     mainwindow.cpp \
-    imageitem.cpp
+    imageitem.cpp \
+    soundwidget.cpp
 
 HEADERS  += \
         resourceview.h \
     mainwindow.h \
-    imageitem.h
+    imageitem.h \
+    soundwidget.h
 
 FORMS    += \
-    mainwindow.ui
+    mainwindow.ui \
+    soundwidget.ui
 
 RESOURCES +=
 

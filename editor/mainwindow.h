@@ -52,7 +52,7 @@ public:
     ~MainWindow();
     
 private slots:
-    void on_filesTable_cellClicked(int row, int column);
+    void on_filesTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
 private:
     Ui::MainWindow *ui;
