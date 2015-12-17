@@ -204,6 +204,50 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentCol
         ui->stackedWidget->setCurrentWidget(ui->graphicsPage);
     }
 
+    if(resourceName == "levelmap.txt") {
+        ImageItem *item = new ImageItem(readPCXimage("level.pcx"));
+        m_scene.addItem(item);
+
+        uint32_t offset = m_datHeader.value(resourceName).offset;
+        for(int row = 0; row < 16; row++) {
+            for(int column = 0; column < 22; column++) {
+                QColor blockColor;
+
+                switch(m_datContents.at(offset)) {
+                case '0':
+                    blockColor.setRgb(0, 0, 0, 0);
+                    break;
+
+                case '1':
+                    blockColor.setRgb(200, 100, 0, 200);
+                    break;
+
+                case '2':
+                    blockColor.setRgb(0, 60, 85, 200);
+                    break;
+
+                case '3':
+                    blockColor.setRgb(140, 220, 255, 200);
+                    break;
+
+                case '4':
+                    blockColor.setRgb(200, 200, 0, 200);
+                    break;
+
+                default:
+                    blockColor.setRgb(200, 0, 0, 200);
+                }
+
+                QPen pen;
+                pen.setWidth(0);
+                m_scene.addRect(QRect(column * 16, row * 16, 16, 16), QPen(pen), QBrush(blockColor));
+                offset++;
+            }
+            offset += 2;
+        }
+        ui->stackedWidget->setCurrentWidget(ui->graphicsPage);
+    }
+
     m_scene.setSceneRect(boundingBox);
     ui->graphicsView->setZoom(1.0);
     ui->graphicsView->centerOn(boundingBox.center());
