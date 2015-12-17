@@ -156,8 +156,24 @@ QImage MainWindow::readGobImage(const GobImage &gobImage)
     return result;
 }
 
+QByteArray MainWindow::readSMP(const QString &name)
+{
+    uint32_t offset = m_datHeader.value(name).offset;
+    uint32_t size = m_datHeader.value(name).size;
+    QByteArray data(&m_datContents.constData()[offset], size);
+
+    // Converting signed to unsigned format, because signed doesn't play properly.
+    for(int i = 0; i < data.size(); ++i) {
+        data[i] = data[i] + char(127);
+    }
+
+    return data;
+}
+
 void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
+    ui->stackedWidget->setCurrentWidget(ui->emptyPage);
+
     QString resourceName = ui->filesTable->item(currentRow, 0)->text();
     QRectF boundingBox;
     m_scene.clear();
@@ -166,6 +182,7 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentCol
         ImageItem *item = new ImageItem(readPCXimage(resourceName));
         m_scene.addItem(item);
         boundingBox = item->boundingRect();
+        ui->stackedWidget->setCurrentWidget(ui->graphicsPage);
     }
 
     if(resourceName.endsWith(".gob")) {
@@ -183,11 +200,18 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentCol
             boundingBox.setBottom( qMax( boundingBox.bottom(), item->boundingRect().bottom() ) );
             m_scene.addRect(itemBB, QPen(QColor(127, 127, 127, 200)));
         }
+        ui->stackedWidget->setCurrentWidget(ui->graphicsPage);
     }
 
     m_scene.setSceneRect(boundingBox);
     ui->graphicsView->setZoom(1.0);
     ui->graphicsView->centerOn(boundingBox.center());
+
+    if(resourceName.endsWith(".smp")) {
+        ui->stackedWidget->setCurrentWidget(ui->soundPage);
+        ui->soundPage->setSoundData(readSMP(resourceName));
+        ui->soundPage->setSoundDescription("Raw 8 bit signed 22050Hz");
+    }
 }
 
 uint16_t MainWindow::readUint16(uint32_t &offset)

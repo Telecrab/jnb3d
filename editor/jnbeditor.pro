@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += widgets core gui
+QT       += widgets core gui multimedia
 
 TARGET = jnbeditor
 TEMPLATE = app

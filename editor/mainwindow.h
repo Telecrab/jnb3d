@@ -68,6 +68,7 @@ private:
     void readPCXpalette(const QString &name);
     std::vector<GobImage> readGOB(const QString &name);
     QImage readGobImage(const GobImage &gobImage);
+    QByteArray readSMP(const QString &name);
 
 };
 
