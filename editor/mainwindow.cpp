@@ -59,9 +59,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->graphicsView->setScene(&m_scene);
 
-    //Reading the palette which according to docs should be the same for everything.
-    readPCXpalette("level.pcx");
-//    m_scene.addPixmap(QPixmap::fromImage(readPCXimage("level.pcx")));
+    //Reading the palette which will be used for GOBs.
+    m_colorTable = readPCXpalette("level.pcx");
 
     m_scene.setBackgroundBrush(QBrush(Qt::magenta));
 }
@@ -71,10 +70,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::readPCXpalette(const QString &name)
+QVector<QRgb> MainWindow::readPCXpalette(const QString &name)
 {
     int pcxOffset = m_datHeader.value(name).offset + m_datHeader.value(name).size - 768;
     int paletteIndex = 0;
+    QVector<QRgb> palette(256);
     QRgb paletteItem;
     while (paletteIndex < 256)
     {
@@ -82,9 +82,10 @@ void MainWindow::readPCXpalette(const QString &name)
         paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 16);
         paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 8);
         paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 0);
-        m_colorTable[paletteIndex++] = paletteItem;
+        palette[paletteIndex++] = paletteItem;
     }
-    qDebug() << paletteIndex;
+
+    return palette;
 }
 
 QImage MainWindow::readPCXimage(const QString &name)
@@ -113,7 +114,7 @@ QImage MainWindow::readPCXimage(const QString &name)
         }
     }
 
-    image.setColorTable(m_colorTable);
+    image.setColorTable(readPCXpalette(name));
 
     return image;
 }
