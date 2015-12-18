@@ -21,7 +21,7 @@ SoundWidget::SoundWidget(QWidget *parent) :
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(format)) {
-        qWarning() << "Raw audio format not supported by backend, cannot play audio.";
+        qFatal("Raw audio format not supported by backend, cannot play audio.");
         return;
     }
 
