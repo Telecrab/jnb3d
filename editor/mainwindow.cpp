@@ -217,6 +217,7 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentCol
     if(resourceName == "levelmap.txt") {
         ImageItem *item = new ImageItem(readPCXimage("level.pcx"));
         m_scene.addItem(item);
+        boundingBox = item->boundingRect();
 
         uint32_t offset = m_datHeader.value(resourceName).offset;
         for(int row = 0; row < 16; row++) {
