@@ -53,6 +53,7 @@
           </layout>
          </widget>
          <widget class="SoundWidget" name="soundPage"/>
+         <widget class="MusicWidget" name="musicPage"/>
         </widget>
        </item>
       </layout>
@@ -85,7 +86,7 @@
        <number>1</number>
       </property>
       <attribute name="horizontalHeaderVisible">
-       <bool>true</bool>
+       <bool>false</bool>
       </attribute>
       <attribute name="verticalHeaderVisible">
        <bool>false</bool>
@@ -141,6 +142,12 @@
    <class>SoundWidget</class>
    <extends>QWidget</extends>
    <header>soundwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MusicWidget</class>
+   <extends>QWidget</extends>
+   <header>musicwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

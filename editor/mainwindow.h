@@ -69,6 +69,7 @@ private:
     std::vector<GobImage> readGOB(const QString &name);
     QImage readGobImage(const GobImage &gobImage);
     QByteArray readSMP(const QString &name);
+    QByteArray readMOD(const QString &name);
 
 };
 

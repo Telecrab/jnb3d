@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_colorTable = readPCXpalette("level.pcx");
 
     m_scene.setBackgroundBrush(QBrush(Qt::magenta));
+
+    ui->stackedWidget->setCurrentWidget(ui->emptyPage);
 }
 
 MainWindow::~MainWindow()
@@ -171,6 +173,14 @@ QByteArray MainWindow::readSMP(const QString &name)
     return data;
 }
 
+QByteArray MainWindow::readMOD(const QString &name)
+{
+    uint32_t offset = m_datHeader.value(name).offset;
+    uint32_t size = m_datHeader.value(name).size;
+    QByteArray data(&m_datContents.constData()[offset], size);
+    return data;
+}
+
 void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
     ui->stackedWidget->setCurrentWidget(ui->emptyPage);
@@ -256,6 +266,11 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentCol
         ui->stackedWidget->setCurrentWidget(ui->soundPage);
         ui->soundPage->setSoundData(readSMP(resourceName));
         ui->soundPage->setSoundDescription("Raw 8 bit signed 22050Hz");
+    }
+
+    if(resourceName.endsWith(".mod")) {
+        ui->stackedWidget->setCurrentWidget(ui->musicPage);
+        ui->musicPage->setMusicData(readMOD(resourceName));
     }
 }
 

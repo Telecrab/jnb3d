@@ -14,17 +14,22 @@ SOURCES += main.cpp\
         resourceview.cpp \
     mainwindow.cpp \
     imageitem.cpp \
-    soundwidget.cpp
+    soundwidget.cpp \
+    musicwidget.cpp \
+    micromod/micromod.c
 
 HEADERS  += \
         resourceview.h \
     mainwindow.h \
     imageitem.h \
-    soundwidget.h
+    soundwidget.h \
+    musicwidget.h \
+    micromod/micromod.h
 
 FORMS    += \
     mainwindow.ui \
-    soundwidget.ui
+    soundwidget.ui \
+    musicwidget.ui
 
 RESOURCES +=
 
