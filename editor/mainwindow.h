@@ -16,7 +16,7 @@ Q_DECLARE_TYPEINFO(DatEntry, Q_PRIMITIVE_TYPE);
 
 struct DatHeader
 {
-    uint32_t nummerOfEntries;
+    uint32_t numberOfEntries;
     DatEntry *entries;
 };
 Q_DECLARE_TYPEINFO(DatHeader, Q_PRIMITIVE_TYPE);
