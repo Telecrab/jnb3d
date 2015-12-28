@@ -189,7 +189,7 @@ MusicWidget::~MusicWidget()
 
 void MusicWidget::setMusicData(const QByteArray &data)
 {
-    ui->pushButton->setChecked(false);
+    ui->pushButtonPlayPause->setChecked(false);
 
     m_audioOutput->stop();
     m_micromod->close();
@@ -204,16 +204,18 @@ void MusicWidget::setMusicData(const QByteArray &data)
 
 void MusicWidget::handleStateChanged(QAudio::State newState)
 {
+    qDebug() << newState;
     switch (newState) {
+
     case QAudio::IdleState:
         // Finished playing (no more data)
         m_audioOutput->stop();
-        ui->pushButton->setChecked(false);
+        ui->pushButtonPlayPause->setChecked(false);
         break;
 
     case QAudio::StoppedState:
         // Stopped for other reasons
-        ui->pushButton->setChecked(false);
+        ui->pushButtonPlayPause->setChecked(false);
 
         if (m_audioOutput->error() != QAudio::NoError) {
             // Error handling
@@ -226,14 +228,20 @@ void MusicWidget::handleStateChanged(QAudio::State newState)
     }
 }
 
-void MusicWidget::on_pushButton_toggled(bool checked)
+void MusicWidget::on_pushButtonPlayPause_toggled(bool checked)
 {
     if(checked) {
-        m_audioOutput->start(m_micromod);
+        if(m_audioOutput->state() == QAudio::SuspendedState) {
+            m_audioOutput->resume();
+        } else {
+            m_audioOutput->start(m_micromod);
+        }
+
+        ui->pushButtonPlayPause->setText("||");
+
     } else {
-        m_audioOutput->stop();
-        m_micromod->rewind();
-        ui->sliderSongPosition->setValue(0);
+        m_audioOutput->suspend();
+        ui->pushButtonPlayPause->setText(">");
     }
 }
 
@@ -259,4 +267,12 @@ void MusicWidget::on_sliderSongPosition_valueChanged(int value)
 void MusicWidget::on_sliderSongPosition_sliderReleased()
 {
     m_micromod->setSongPosition(ui->sliderSongPosition->value());
+}
+
+void MusicWidget::on_pushButtonStop_clicked()
+{
+    m_audioOutput->stop();
+    m_micromod->rewind();
+    ui->sliderSongPosition->setValue(0);
+    ui->pushButtonPlayPause->setChecked(false);
 }

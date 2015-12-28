@@ -41,7 +41,7 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="pushButtonPlayPause">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -51,7 +51,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Play</string>
+    <string>&gt;</string>
    </property>
    <property name="checkable">
     <bool>true</bool>
@@ -102,6 +102,19 @@
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButtonStop">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>150</y>
+     <width>91</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>[]</string>
    </property>
   </widget>
  </widget>

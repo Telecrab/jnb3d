@@ -31,9 +31,10 @@ public slots:
     void handleStateChanged(QAudio::State newState);
 
 private slots:
-    void on_pushButton_toggled(bool checked);
+    void on_pushButtonPlayPause_toggled(bool checked);
     void on_sliderSongPosition_valueChanged(int value);
     void on_sliderSongPosition_sliderReleased();
+    void on_pushButtonStop_clicked();
 
 private:
     Ui::MusicWidget *ui;
