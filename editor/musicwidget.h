@@ -33,13 +33,12 @@ public slots:
 private slots:
     void on_pushButton_toggled(bool checked);
 
+    void on_sliderSongPosition_valueChanged(int value);
+
 private:
     Ui::MusicWidget *ui;
 
-    QByteArray m_musicData;
-    QBuffer m_audioBuffer;
     QAudioOutput *m_audioOutput;
-
     ItsASecretToEverybody::MicromodDevice *m_micromod;
 };
 

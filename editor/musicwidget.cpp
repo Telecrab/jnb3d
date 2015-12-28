@@ -28,6 +28,7 @@ public:
     qint64 bytesAvailable() const Q_DECL_OVERRIDE;
 
     QString songInfo();
+    int songDurationMilliseconds() { return double(m_samplesRemaining) * 1000 / m_format.sampleRate();}
 
 private:
     QAudioFormat m_format;
@@ -52,6 +53,8 @@ bool MicromodDevice::open(const QByteArray &musicData)
         qDebug("Micromod has set up us the bomb!");
         return false;
     }
+
+    m_samplesRemaining = micromod_calculate_song_duration();
 
     return QIODevice::open(QIODevice::ReadOnly);
 }
@@ -120,7 +123,6 @@ QString MicromodDevice::songInfo()
         songInfo += QStringLiteral("%1 - %2\n").arg(inst + 16, 2).arg(string, 22);
     }
 
-    m_samplesRemaining = micromod_calculate_song_duration();
     songInfo += QStringLiteral("Song Duration: %1 seconds.").arg( m_samplesRemaining / m_format.sampleRate() );
     return songInfo;
 }
@@ -149,7 +151,8 @@ MusicWidget::MusicWidget(QWidget *parent) :
     m_audioOutput = new QAudioOutput(format, this);
     connect(m_audioOutput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
 
-    qDebug()  << m_audioOutput->format();
+    m_audioOutput->setNotifyInterval(100);
+    connect( m_audioOutput, &QAudioOutput::notify, [=](){ ui->sliderSongPosition->setValue( ui->sliderSongPosition->value() + 100 ); } );
 
     m_micromod = new ItsASecretToEverybody::MicromodDevice(format);
 }
@@ -170,7 +173,10 @@ void MusicWidget::setMusicData(const QByteArray &data)
     m_micromod->open(data);
 
     ui->plainTextEdit->clear();
-    ui->plainTextEdit->appendPlainText(m_micromod->songInfo());
+    ui->plainTextEdit->appendPlainText( m_micromod->songInfo() );
+
+    ui->sliderSongPosition->setMaximum( m_micromod->songDurationMilliseconds() );
+    ui->sliderSongPosition->setValue(0);
 }
 
 void MusicWidget::handleStateChanged(QAudio::State newState)
@@ -204,5 +210,25 @@ void MusicWidget::on_pushButton_toggled(bool checked)
     } else {
         m_audioOutput->stop();
         m_micromod->reset();
+        ui->sliderSongPosition->setValue(0);
     }
+}
+
+void MusicWidget::on_sliderSongPosition_valueChanged(int value)
+{
+    uint minutes, seconds, mseconds;
+
+    minutes = value / ( 60 * 1000 );
+    value -= minutes * ( 60 * 1000 );
+
+    seconds = value / 1000;
+    value -= seconds * 1000;
+
+    mseconds = value / 100;
+
+    ui->labelSongPosition->setText( QStringLiteral("%1m:%2.%3s")
+                                    .arg( minutes, 2, 10, QChar('0') )
+                                    .arg( seconds, 2, 10, QChar('0') )
+                                    .arg( mseconds, 1, 10, QChar('0') )
+                                    );
 }
