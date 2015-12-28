@@ -11,6 +11,8 @@ extern "C" {
 #include "micromod/micromod.h"
 }
 
+typedef qint64 milliseconds;
+
 namespace ItsASecretToEverybody {
 class MicromodDevice : public QIODevice
 {
@@ -21,7 +23,8 @@ public:
 
     bool open(const QByteArray &musicData);
     void close() Q_DECL_OVERRIDE;
-    bool reset() Q_DECL_OVERRIDE;
+    bool rewind();
+    bool setSongPosition(milliseconds position);
 
     qint64 readData(char *data, qint64 maxlen) Q_DECL_OVERRIDE;
     qint64 writeData(const char *data, qint64 len) Q_DECL_OVERRIDE;
@@ -41,7 +44,8 @@ private:
 
 MicromodDevice::MicromodDevice(const QAudioFormat &format)
     : m_format(format),
-      m_sampleSize( format.channelCount() * (format.sampleSize() / 8) )
+      m_sampleSize( format.channelCount() * (format.sampleSize() / 8) ),
+      m_samplesRemaining(0)
 {
 
 }
@@ -65,10 +69,26 @@ void MicromodDevice::close()
     QIODevice::close();
 }
 
-bool MicromodDevice::reset()
+bool MicromodDevice::rewind()
 {
+    if( !isOpen() ) return false;
+
     m_samplesRemaining = micromod_calculate_song_duration();
     micromod_set_position(0);
+    return true;
+}
+
+bool MicromodDevice::setSongPosition(milliseconds position)
+{
+    if(position < 0) return false;
+
+    rewind();
+
+    long samplesToSkip = m_format.sampleRate() / 1000 * position;
+    micromod_get_audio(NULL, samplesToSkip);
+    m_samplesRemaining -= samplesToSkip;
+
+    return true;
 }
 
 qint64 MicromodDevice::readData(char *data, qint64 maxlen)
@@ -152,7 +172,10 @@ MusicWidget::MusicWidget(QWidget *parent) :
     connect(m_audioOutput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
 
     m_audioOutput->setNotifyInterval(100);
-    connect( m_audioOutput, &QAudioOutput::notify, [=](){ ui->sliderSongPosition->setValue( ui->sliderSongPosition->value() + 100 ); } );
+    connect( m_audioOutput, &QAudioOutput::notify, [=](){
+        if( !ui->sliderSongPosition->isSliderDown() )
+            ui->sliderSongPosition->setValue( ui->sliderSongPosition->value() + 100 );
+    });
 
     m_micromod = new ItsASecretToEverybody::MicromodDevice(format);
 }
@@ -209,7 +232,7 @@ void MusicWidget::on_pushButton_toggled(bool checked)
         m_audioOutput->start(m_micromod);
     } else {
         m_audioOutput->stop();
-        m_micromod->reset();
+        m_micromod->rewind();
         ui->sliderSongPosition->setValue(0);
     }
 }
@@ -231,4 +254,9 @@ void MusicWidget::on_sliderSongPosition_valueChanged(int value)
                                     .arg( seconds, 2, 10, QChar('0') )
                                     .arg( mseconds, 1, 10, QChar('0') )
                                     );
+}
+
+void MusicWidget::on_sliderSongPosition_sliderReleased()
+{
+    m_micromod->setSongPosition(ui->sliderSongPosition->value());
 }
