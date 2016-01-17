@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>DroidSansMono.ttf</file>
+    </qresource>
+</RCC>

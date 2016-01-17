@@ -31,6 +31,7 @@ FORMS    += \
     soundwidget.ui \
     musicwidget.ui
 
-RESOURCES +=
+RESOURCES += \
+    resources.qrc
 
 QMAKE_CXXFLAGS += -std=c++11

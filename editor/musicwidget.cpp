@@ -6,6 +6,8 @@
 #include <QtMultimedia/QAudioFormat>
 #include <QSysInfo>
 #include <QDebug>
+#include <QFontDatabase>
+#include <QFont>
 
 extern "C" {
 #include "micromod/micromod.h"
@@ -118,7 +120,7 @@ qint64 MicromodDevice::readData(char *data, qint64 maxlen)
 }
 
 qint64 MicromodDevice::writeData(const char *data, qint64 len)
-{    
+{
     Q_UNUSED(data);
     Q_UNUSED(len);
 
@@ -140,7 +142,7 @@ QString MicromodDevice::songInfo()
         micromod_get_string( inst, string );
         songInfo += QStringLiteral("%1 - %2").arg(inst, 2).arg(string, 22);
         micromod_get_string( inst + 16, string );
-        songInfo += QStringLiteral("%1 - %2\n").arg(inst + 16, 2).arg(string, 22);
+        songInfo += QStringLiteral("%1 - %2\n").arg(inst + 16, 3).arg(string, 22);
     }
 
     songInfo += QStringLiteral("Song Duration: %1 seconds.").arg( m_samplesRemaining / m_format.sampleRate() );
@@ -153,6 +155,10 @@ MusicWidget::MusicWidget(QWidget *parent) :
     ui(new Ui::MusicWidget)
 {
     ui->setupUi(this);
+
+    QFontDatabase::addApplicationFont(":/DroidSansMono.ttf");
+    QFont font("Droid Sans Mono", 10);
+    ui->plainTextEdit->setFont(font);
 
     QAudioFormat format;
     format.setSampleRate(48000);
