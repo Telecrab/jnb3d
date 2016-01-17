@@ -1,7 +1,7 @@
-#include "resourceview.h"
+#include "graphicresourceview.h"
 #include <QWheelEvent>
 
-ResourceView::ResourceView(QWidget *parent)
+GraphicResourceView::GraphicResourceView(QWidget *parent)
     : QGraphicsView(parent) ,
       m_zoom(1.0)
 {
@@ -9,7 +9,7 @@ ResourceView::ResourceView(QWidget *parent)
 
 }
 
-void ResourceView::wheelEvent(QWheelEvent *event)
+void GraphicResourceView::wheelEvent(QWheelEvent *event)
 {
     if(event->modifiers() & Qt::ControlModifier) {
         if (event->delta() > 0)
@@ -22,7 +22,7 @@ void ResourceView::wheelEvent(QWheelEvent *event)
     }
 }
 
-void ResourceView::keyPressEvent(QKeyEvent *event)
+void GraphicResourceView::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Alt) {
         setDragMode(QGraphicsView::ScrollHandDrag);
@@ -32,7 +32,7 @@ void ResourceView::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void ResourceView::keyReleaseEvent(QKeyEvent *event)
+void GraphicResourceView::keyReleaseEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Alt) {
         setDragMode(QGraphicsView::NoDrag);
@@ -42,7 +42,7 @@ void ResourceView::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
-void ResourceView::setZoom(qreal value)
+void GraphicResourceView::setZoom(qreal value)
 {
     if( (value < 0.01) || (std::abs(m_zoom - value) < 0.0001) )
         return;

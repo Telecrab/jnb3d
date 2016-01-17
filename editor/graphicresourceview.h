@@ -3,12 +3,12 @@
 
 #include <QGraphicsView>
 
-class ResourceView : public QGraphicsView
+class GraphicResourceView : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    ResourceView(QWidget *parent = 0);
+    GraphicResourceView(QWidget *parent = 0);
     void setZoom(qreal value);
     qreal zoom() {return m_zoom;}
 

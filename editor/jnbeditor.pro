@@ -11,20 +11,20 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        resourceview.cpp \
     mainwindow.cpp \
     imageitem.cpp \
     soundwidget.cpp \
     musicwidget.cpp \
-    micromod/micromod.c
+    micromod/micromod.c \
+    graphicresourceview.cpp
 
 HEADERS  += \
-        resourceview.h \
     mainwindow.h \
     imageitem.h \
     soundwidget.h \
     musicwidget.h \
-    micromod/micromod.h
+    micromod/micromod.h \
+    graphicresourceview.h
 
 FORMS    += \
     mainwindow.ui \

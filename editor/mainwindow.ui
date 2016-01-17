@@ -48,7 +48,7 @@
          <widget class="QWidget" name="graphicsPage">
           <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <widget class="ResourceView" name="graphicsView"/>
+            <widget class="GraphicResourceView" name="graphicsView"/>
            </item>
           </layout>
          </widget>
@@ -134,9 +134,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>ResourceView</class>
+   <class>GraphicResourceView</class>
    <extends>QGraphicsView</extends>
-   <header>resourceview.h</header>
+   <header>graphicresourceview.h</header>
   </customwidget>
   <customwidget>
    <class>SoundWidget</class>
