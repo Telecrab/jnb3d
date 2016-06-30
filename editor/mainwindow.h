@@ -7,6 +7,8 @@
 #include <QGraphicsScene>
 #include <vector>
 
+#include "datloader.h"
+
 struct DatEntry
 {
     uint32_t offset;
@@ -55,6 +57,7 @@ private slots:
     void on_filesTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
 private:
+    DATloader m_datLoader;
     Ui::MainWindow *ui;
     QHash<QString, DatEntry> m_datHeader;
     QByteArray m_datContents;

@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QGraphicsTextItem>
 #include <QWheelEvent>
+
 #include "imageitem.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -161,9 +162,8 @@ QImage MainWindow::readGobImage(const GobImage &gobImage)
 
 QByteArray MainWindow::readSMP(const QString &name)
 {
-    uint32_t offset = m_datHeader.value(name).offset;
-    uint32_t size = m_datHeader.value(name).size;
-    QByteArray data(&m_datContents.constData()[offset], size);
+    std::vector<char> entryData = m_datLoader.getEntryData( name.toStdString() );
+    QByteArray data( entryData.data(), entryData.size() );
 
     // Converting signed to unsigned format, because signed doesn't play properly.
     for(int i = 0; i < data.size(); ++i) {
@@ -175,9 +175,8 @@ QByteArray MainWindow::readSMP(const QString &name)
 
 QByteArray MainWindow::readMOD(const QString &name)
 {
-    uint32_t offset = m_datHeader.value(name).offset;
-    uint32_t size = m_datHeader.value(name).size;
-    QByteArray data(&m_datContents.constData()[offset], size);
+    std::vector<char> entryData = m_datLoader.getEntryData( name.toStdString() );
+    QByteArray data( entryData.data(), entryData.size() );
     return data;
 }
 
