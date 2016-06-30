@@ -1,5 +1,6 @@
 #include "graphicresourceview.h"
 #include <QWheelEvent>
+#include <cmath>
 
 GraphicResourceView::GraphicResourceView(QWidget *parent)
     : QGraphicsView(parent) ,
@@ -44,7 +45,7 @@ void GraphicResourceView::keyReleaseEvent(QKeyEvent *event)
 
 void GraphicResourceView::setZoom(qreal value)
 {
-    if( (value < 0.01) || (std::abs(m_zoom - value) < 0.0001) )
+    if( (value < 0.01) || ( std::abs(m_zoom - value) < 0.0001 ) )
         return;
 
     m_zoom = value;

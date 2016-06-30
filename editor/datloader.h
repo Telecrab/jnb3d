@@ -5,11 +5,14 @@
 #include <string>
 #include <unordered_map>
 
+using EntryOffset   = uint32_t;
+using EntrySize     = uint32_t;
+
 struct ArchiveEntry
 {
     std::string name;
-    uint32_t offset;
-    uint32_t size;
+    EntryOffset offset;
+    EntrySize   size;
 };
 
 class DATloader
@@ -19,7 +22,7 @@ public:
 
     void loadArchive(const std::string &filename);
     std::vector<ArchiveEntry> archiveContents();
-    std::vector<char> getEntryData(const std::string & name);
+    char *getEntryData(const std::string & name, EntrySize &size);
 
 private:
     std::vector<char> m_fileData;

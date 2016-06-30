@@ -78,7 +78,7 @@ MainWindow::~MainWindow()
 
 QVector<QRgb> MainWindow::readPCXpalette(const QString &name)
 {
-    int pcxOffset = m_datHeader.value(name).offset + m_datHeader.value(name).size - 768;
+    int pcxOffset = m_datHeader.value(name).offset + m_datHeader.value(name).size - 768; // Palette is the last 768 bytes of the image.
     int paletteIndex = 0;
     QVector<QRgb> palette(256);
     QRgb paletteItem;
@@ -165,8 +165,9 @@ QImage MainWindow::readGobImage(const GobImage &gobImage)
 
 QByteArray MainWindow::readSMP(const QString &name)
 {
-    std::vector<char> entryData = m_datLoader.getEntryData( name.toStdString() );
-    QByteArray data( entryData.data(), entryData.size() );
+    EntrySize entrySize;
+    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
+    QByteArray data( entryData, entrySize );
 
     // Converting signed to unsigned format, because signed doesn't play properly.
     for(int i = 0; i < data.size(); ++i) {
@@ -178,12 +179,13 @@ QByteArray MainWindow::readSMP(const QString &name)
 
 QByteArray MainWindow::readMOD(const QString &name)
 {
-    std::vector<char> entryData = m_datLoader.getEntryData( name.toStdString() );
-    QByteArray data( entryData.data(), entryData.size() );
+    EntrySize entrySize;
+    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
+    QByteArray data( entryData, entrySize );
     return data;
 }
 
-void MainWindow::on_filesTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+void MainWindow::on_filesTable_currentCellChanged(int currentRow, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/)
 {
     ui->stackedWidget->setCurrentWidget(ui->emptyPage);
 

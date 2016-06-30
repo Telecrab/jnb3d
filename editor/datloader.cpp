@@ -67,10 +67,14 @@ std::vector<ArchiveEntry> DATloader::archiveContents()
     return m_archiveContents;
 }
 
-std::vector<char> DATloader::getEntryData(const std::string &name)
+char *DATloader::getEntryData(const std::string &name, EntrySize &size)
 {
-    if( m_archiveIndex.find(name) == m_archiveIndex.end() ) return std::vector<char>();
+    if( m_archiveIndex.find(name) == m_archiveIndex.end() ) {
+        size = 0;
+        return nullptr;
+    }
 
     const ArchiveEntry &entry = m_archiveContents[ m_archiveIndex.at(name) ];
-    return std::vector<char>( &m_fileData[entry.offset], &m_fileData[entry.offset + entry.size] );
+    size = entry.size;
+    return &m_fileData[entry.offset];
 }
