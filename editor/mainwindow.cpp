@@ -78,16 +78,18 @@ MainWindow::~MainWindow()
 
 QVector<QRgb> MainWindow::readPCXpalette(const QString &name)
 {
-    int pcxOffset = m_datHeader.value(name).offset + m_datHeader.value(name).size - 768; // Palette is the last 768 bytes of the image.
+    EntrySize entrySize;
+    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
+    int pcxOffset = entrySize - 768; // Palette is the last 768 bytes of the image.
     int paletteIndex = 0;
     QVector<QRgb> palette(256);
     QRgb paletteItem;
     while (paletteIndex < 256)
     {
         paletteItem  =                                   (0xFF << 24);
-        paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 16);
-        paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 8);
-        paletteItem += (uint8_t(m_datContents.at(pcxOffset++)) << 0);
+        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 16 );
+        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 8 );
+        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 0 );
         palette[paletteIndex++] = paletteItem;
     }
 
@@ -98,17 +100,19 @@ QImage MainWindow::readPCXimage(const QString &name)
 {
     QImage image(400, 256, QImage::Format_Indexed8); // As described in modify.txt.
 
+    EntrySize entrySize;
+    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
     uint8_t *levelImage = image.bits();
     uint8_t currentByte;
     uint8_t fillerByte;
-    int pcxOffset = m_datHeader.value(name).offset + 128;
+    int pcxOffset = 128;
     int levelImageOffset = 0;
 
-    while (levelImageOffset < 400*256) {
-        currentByte = m_datContents.at(pcxOffset++);
+    while (levelImageOffset < 400 * 256) {
+        currentByte = entryData[pcxOffset++];
 
         if ((currentByte & 0xc0) == 0xc0) {
-            fillerByte = m_datContents.at(pcxOffset++);
+            fillerByte = entryData[pcxOffset++];
             currentByte &= 0x3f;
 
             for (int fillerCount = 0; fillerCount < currentByte; fillerCount++) {
