@@ -16,7 +16,8 @@ SOURCES += main.cpp\
     soundwidget.cpp \
     musicwidget.cpp \
     micromod/micromod.c \
-    graphicresourceview.cpp
+    graphicresourceview.cpp \
+    datloader.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -24,7 +25,8 @@ HEADERS  += \
     soundwidget.h \
     musicwidget.h \
     micromod/micromod.h \
-    graphicresourceview.h
+    graphicresourceview.h \
+    datloader.h
 
 FORMS    += \
     mainwindow.ui \
@@ -34,4 +36,4 @@ FORMS    += \
 RESOURCES += \
     resources.qrc
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -Wall
