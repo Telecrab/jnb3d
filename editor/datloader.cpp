@@ -24,10 +24,16 @@ DATloader::DATloader()
     //                     std::istreambuf_iterator<char>());
     //
     // std::cout << m_fileData.size() << std::endl;
-    QFile level("jumpbump.dat");
+
+}
+
+void DATloader::loadArchive(const std::string &filename)
+{
+    QFile level( QString::fromStdString(filename) );
     level.open(QIODevice::ReadOnly);
     if(!level.isOpen()) {
-        qFatal("Cannot open 'jumpbump.dat'.");
+        std::string message = "Cannot open '" + filename + "'.";
+        qFatal( message.c_str() );
         return;
     }
     std::string data = level.readAll().toStdString(); // Cashing the file in memory for later use

@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
       m_colorTable(256)
 {
     ui->setupUi(this);
+
+    m_datLoader.loadArchive("jumpbump.dat");
+
     QFile level("jumpbump.dat");
     level.open(QIODevice::ReadOnly);
     if(!level.isOpen()) {
