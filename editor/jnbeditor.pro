@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     musicwidget.cpp \
     micromod/micromod.c \
     graphicresourceview.cpp \
-    datloader.cpp
+    datloader.cpp \
+    resourcecontainer.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -26,7 +27,8 @@ HEADERS  += \
     musicwidget.h \
     micromod/micromod.h \
     graphicresourceview.h \
-    datloader.h
+    datloader.h \
+    resourcecontainer.h
 
 FORMS    += \
     mainwindow.ui \

@@ -7,7 +7,7 @@
 #include <QGraphicsScene>
 #include <vector>
 
-#include "datloader.h"
+#include "resourcecontainer.h"
 
 struct DatEntry
 {
@@ -22,24 +22,6 @@ struct DatHeader
     DatEntry *entries;
 };
 Q_DECLARE_TYPEINFO(DatHeader, Q_PRIMITIVE_TYPE);
-
-// Also see http://stackoverflow.com/a/25938871.
-struct GobImage {
-    const uint8_t *buf_;
-
-    const uint16_t& width() const { return reinterpret_cast<const uint16_t*>(buf_)[0]; }
-    const uint16_t& height() const { return reinterpret_cast<const uint16_t*>(buf_)[1]; }
-    const uint16_t& hotSpotX() const { return reinterpret_cast<const uint16_t*>(buf_)[2]; }
-    const uint16_t& hotSpotY() const { return reinterpret_cast<const uint16_t*>(buf_)[3]; }
-
-    const uint8_t *bitmap() const { return &buf_[8]; }
-};
-
-struct GobHeader
-{
-    uint16_t numberOfImages;
-    std::vector<uint32_t> imageOffsets;
-};
 
 namespace Ui {
 class MainWindow;
@@ -58,6 +40,7 @@ private slots:
 
 private:
     DATloader m_datLoader;
+    ResourceContainer m_resourceContainer;
     Ui::MainWindow *ui;
     QHash<QString, DatEntry> m_datHeader;
     QGraphicsScene m_scene;

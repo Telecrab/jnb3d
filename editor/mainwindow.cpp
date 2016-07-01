@@ -15,9 +15,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     m_datLoader.loadArchive("jumpbump.dat");
+    m_resourceContainer.loadContainer("jumpbump.dat");
 
     // Reading .dat directory
-    std::vector<ArchiveEntry> archiveContents = m_datLoader.archiveContents();
+    std::vector<ArchiveEntry> archiveContents = m_resourceContainer.containerContents();
     for (ArchiveEntry archiveEntry : archiveContents)
     {
         DatEntry entry;
@@ -69,52 +70,54 @@ MainWindow::~MainWindow()
 
 QVector<QRgb> MainWindow::readPCXpalette(const QString &name)
 {
-    EntrySize entrySize;
-    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
-    int pcxOffset = entrySize - 768; // Palette is the last 768 bytes of the image.
-    int paletteIndex = 0;
-    QVector<QRgb> palette(256);
-    QRgb paletteItem;
-    while (paletteIndex < 256)
-    {
-        paletteItem  =                                   (0xFF << 24);
-        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 16 );
-        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 8 );
-        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 0 );
-        palette[paletteIndex++] = paletteItem;
-    }
+//    EntrySize entrySize;
+//    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
+//    int pcxOffset = entrySize - 768; // Palette is the last 768 bytes of the image.
+//    int paletteIndex = 0;
+//    QVector<QRgb> palette(256);
+//    QRgb paletteItem;
+//    while (paletteIndex < 256)
+//    {
+//        paletteItem  =                                   (0xFF << 24);
+//        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 16 );
+//        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 8 );
+//        paletteItem += ( uint8_t( entryData[pcxOffset++] ) << 0 );
+//        palette[paletteIndex++] = paletteItem;
+//    }
 
-    return palette;
+//    return palette;
+    return QVector<QRgb>::fromStdVector( m_resourceContainer.readPCXpalette( name.toStdString() ) );
 }
 
 QImage MainWindow::readPCXimage(const QString &name)
 {
     QImage image(400, 256, QImage::Format_Indexed8); // As described in modify.txt.
 
-    EntrySize entrySize;
-    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
-    uint8_t *levelImage = image.bits();
-    uint8_t currentByte;
-    uint8_t fillerByte;
-    int pcxOffset = 128;
-    int levelImageOffset = 0;
+//    EntrySize entrySize;
+//    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
+//    uint8_t *levelImage = image.bits();
+//    uint8_t currentByte;
+//    uint8_t fillerByte;
+//    int pcxOffset = 128;
+//    int levelImageOffset = 0;
 
-    while (levelImageOffset < 400 * 256) {
-        currentByte = entryData[pcxOffset++];
+//    while (levelImageOffset < 400 * 256) {
+//        currentByte = entryData[pcxOffset++];
 
-        if ((currentByte & 0xc0) == 0xc0) {
-            fillerByte = entryData[pcxOffset++];
-            currentByte &= 0x3f;
+//        if ((currentByte & 0xc0) == 0xc0) {
+//            fillerByte = entryData[pcxOffset++];
+//            currentByte &= 0x3f;
 
-            for (int fillerCount = 0; fillerCount < currentByte; fillerCount++) {
-                levelImage[levelImageOffset++] = fillerByte;
-            }
+//            for (int fillerCount = 0; fillerCount < currentByte; fillerCount++) {
+//                levelImage[levelImageOffset++] = fillerByte;
+//            }
 
-        } else {
-            levelImage[levelImageOffset++] = currentByte;
-        }
-    }
-
+//        } else {
+//            levelImage[levelImageOffset++] = currentByte;
+//        }
+//    }
+    std::vector<ColorIndex> pcx = m_resourceContainer.readPCXimage( name.toStdString() );
+    memcpy( image.bits(), pcx.data(), pcx.size() * sizeof(ColorIndex) );
     image.setColorTable(readPCXpalette(name));
 
     return image;
