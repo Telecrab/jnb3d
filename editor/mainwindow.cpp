@@ -165,9 +165,8 @@ QImage MainWindow::readGobImage(const GobImage &gobImage)
 
 QByteArray MainWindow::readSMP(const QString &name)
 {
-    EntrySize entrySize;
-    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
-    QByteArray data( entryData, entrySize );
+    std::vector<char> tmp = m_resourceContainer.readSMP( name.toStdString() );
+    QByteArray data( tmp.data(), tmp.size() );
 
     // Converting signed to unsigned format, because signed doesn't play properly.
     for(int i = 0; i < data.size(); ++i) {
@@ -179,9 +178,8 @@ QByteArray MainWindow::readSMP(const QString &name)
 
 QByteArray MainWindow::readMOD(const QString &name)
 {
-    EntrySize entrySize;
-    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
-    QByteArray data( entryData, entrySize );
+    std::vector<char> tmp = m_resourceContainer.readMOD( name.toStdString() );
+    QByteArray data( tmp.data(), tmp.size() );
     return data;
 }
 
