@@ -64,8 +64,8 @@ private:
     QGraphicsScene m_scene;
     QVector<QRgb> m_colorTable;
 
-    uint16_t readUint16(uint32_t &offset);
-    uint32_t readUint32(uint32_t &offset);
+    uint16_t readUint16(char *&data);
+    uint32_t readUint32(char *&data);
 
     QImage readPCXimage(const QString &name);
     QVector<QRgb> readPCXpalette(const QString &name);

@@ -74,7 +74,7 @@ char *DATloader::getEntryData(const std::string &name, EntrySize &size)
         return nullptr;
     }
 
-    const ArchiveEntry &entry = m_archiveContents[ m_archiveIndex.at(name) ];
+    const ArchiveEntry &entry = m_archiveContents[ m_archiveIndex[name] ];
     size = entry.size;
     return &m_fileData[entry.offset];
 }

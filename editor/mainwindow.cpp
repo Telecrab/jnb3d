@@ -131,22 +131,24 @@ QImage MainWindow::readPCXimage(const QString &name)
 
 std::vector<GobImage> MainWindow::readGOB(const QString &name)
 {
-    uint32_t offset = m_datHeader.value(name).offset;
+    EntrySize entrySize;
+    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
+    char *entryDataBegin = entryData;
     GobHeader header;
 
-    header.numberOfImages = readUint16(offset);
+    header.numberOfImages = readUint16(entryData);
 
     for(int i = 0; i < header.numberOfImages; ++i) {
-        uint32_t value = readUint32(offset);
+        uint32_t value = readUint32(entryData);
         header.imageOffsets.push_back(value);
     }
-    header.imageOffsets.push_back(m_datHeader.value(name).size); // The GOB end offset
+//    header.imageOffsets.push_back(entrySize); // The GOB end offset
 
     std::vector<GobImage> gobs;
     for(int i = 0; i < header.numberOfImages; ++i) {
         GobImage gobImage;
-        std::vector<uint8_t>::size_type entrySize = header.imageOffsets[i+1] - header.imageOffsets[i];
-        gobImage.buf_ = reinterpret_cast<const uint8_t*>( &(m_datContents.constData()[ m_datHeader.value(name).offset + header.imageOffsets[i] ]) );
+//        std::vector<uint8_t>::size_type entrySize = header.imageOffsets[i+1] - header.imageOffsets[i];
+        gobImage.buf_ = reinterpret_cast<const uint8_t*>( &entryDataBegin[ header.imageOffsets[i] ] );
         gobs.push_back(gobImage);
     }
 
@@ -283,20 +285,20 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int /*currentC
     }
 }
 
-uint16_t MainWindow::readUint16(uint32_t &offset)
+uint16_t MainWindow::readUint16(char* &data)
 {
     uint16_t result;
-    result  = (uint8_t(m_datContents.at(offset++)) << 0);
-    result += (uint8_t(m_datContents.at(offset++)) << 8);
+    result  = ( uint8_t(*data++) << 0 );
+    result += ( uint8_t(*data++) << 8 );
     return result;
 }
 
-uint32_t MainWindow::readUint32(uint32_t &offset)
+uint32_t MainWindow::readUint32(char* &data)
 {
     uint32_t result;
-    result  = (uint8_t(m_datContents.at(offset++)) << 0);
-    result += (uint8_t(m_datContents.at(offset++)) << 8);
-    result += (uint8_t(m_datContents.at(offset++)) << 16);
-    result += (uint8_t(m_datContents.at(offset++)) << 24);
+    result  = ( uint8_t(*data++) << 0  );
+    result += ( uint8_t(*data++) << 8  );
+    result += ( uint8_t(*data++) << 16 );
+    result += ( uint8_t(*data++) << 24 );
     return result;
 }

@@ -27,7 +27,7 @@ public:
 private:
     std::vector<char> m_fileData;
     std::vector<ArchiveEntry> m_archiveContents;
-    std::unordered_map<std::string, size_t> m_archiveIndex;
+    std::unordered_map<std::string, std::vector<char>::size_type> m_archiveIndex;
 };
 
 #endif // DATLOADER_H
