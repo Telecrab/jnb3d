@@ -16,26 +16,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_datLoader.loadArchive("jumpbump.dat");
 
-    QFile level("jumpbump.dat");
-    level.open(QIODevice::ReadOnly);
-    if(!level.isOpen()) {
-        qFatal("Cannot open 'jumpbump.dat'.");
-        return;
-    }
-    m_datContents = level.readAll(); // Cashing the file in memory for later use
-    level.reset();
-
     // Reading .dat directory
-    int numEntries = 0;
-    level.read(reinterpret_cast<char*>(&numEntries), 4);
-    DatEntry entry;
-    QString entryName;
-    for (int entryNumber = 0; entryNumber < numEntries; entryNumber++)
+    std::vector<ArchiveEntry> archiveContents = m_datLoader.archiveContents();
+    for (ArchiveEntry archiveEntry : archiveContents)
     {
-        entryName = level.read(12);
-        level.read(reinterpret_cast<char*>(&entry), sizeof(DatEntry));
+        DatEntry entry;
+        QString entryName = QString::fromStdString( archiveEntry.name );
+        entry.offset = archiveEntry.offset;
+        entry.size   = archiveEntry.size;
         m_datHeader.insert(entryName, entry);
     }
+
     QHashIterator<QString, DatEntry> i(m_datHeader);
     int row = 0;
     ui->filesTable->setRowCount(m_datHeader.size());
@@ -229,12 +220,13 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int /*currentC
         m_scene.addItem(item);
         boundingBox = item->boundingRect();
 
-        uint32_t offset = m_datHeader.value(resourceName).offset;
+        EntrySize entrySize;
+        char *entryData = m_datLoader.getEntryData( resourceName.toStdString(), entrySize );
         for(int row = 0; row < 16; row++) {
             for(int column = 0; column < 22; column++) {
                 QColor blockColor;
 
-                switch(m_datContents.at(offset)) {
+                switch(*entryData) {
                 case '0':
                     blockColor.setRgb(0, 0, 0, 0);
                     break;
@@ -262,9 +254,9 @@ void MainWindow::on_filesTable_currentCellChanged(int currentRow, int /*currentC
                 QPen pen;
                 pen.setWidth(0);
                 m_scene.addRect(QRect(column * 16, row * 16, 16, 16), QPen(pen), QBrush(blockColor));
-                offset++;
+                entryData++;
             }
-            offset += 2;
+            entryData += 2;
         }
         ui->stackedWidget->setCurrentWidget(ui->graphicsPage);
     }

@@ -60,7 +60,6 @@ private:
     DATloader m_datLoader;
     Ui::MainWindow *ui;
     QHash<QString, DatEntry> m_datHeader;
-    QByteArray m_datContents;
     QGraphicsScene m_scene;
     QVector<QRgb> m_colorTable;
 
