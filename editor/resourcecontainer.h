@@ -41,6 +41,7 @@ public:
     std::vector<ColorIndex> readGobImage(const GobImage &gobImage);
     std::vector<char> readSMP(const std::string &name);
     std::vector<char> readMOD(const std::string &name);
+    std::vector<char> readLevel(const std::string &name);
 
 private:
     uint16_t readUint16(char *&data);

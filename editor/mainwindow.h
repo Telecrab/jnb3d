@@ -39,19 +39,14 @@ private slots:
     void on_filesTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
 private:
-    DATloader m_datLoader;
     ResourceContainer m_resourceContainer;
     Ui::MainWindow *ui;
     QHash<QString, DatEntry> m_datHeader;
     QGraphicsScene m_scene;
     QVector<QRgb> m_colorTable;
 
-    uint16_t readUint16(char *&data);
-    uint32_t readUint32(char *&data);
-
     QImage readPCXimage(const QString &name);
     QVector<QRgb> readPCXpalette(const QString &name);
-    std::vector<GobImage> readGOB(const QString &name);
     QImage readGobImage(const GobImage &gobImage);
     QByteArray readSMP(const QString &name);
     QByteArray readMOD(const QString &name);

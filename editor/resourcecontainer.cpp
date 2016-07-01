@@ -110,6 +110,13 @@ std::vector<char> ResourceContainer::readMOD(const std::string &name)
     return std::vector<char>(entryData, entryData + entrySize);
 }
 
+std::vector<char> ResourceContainer::readLevel(const std::string &name)
+{
+    EntrySize entrySize;
+    char *entryData = m_loader.getEntryData(name, entrySize);
+    return std::vector<char>(entryData, entryData + entrySize);
+}
+
 uint16_t ResourceContainer::readUint16(char* &data)
 {
     uint16_t result;
