@@ -38,11 +38,14 @@ public:
     std::vector<ColorIndex> readPCXimage(const std::string &name);
     std::vector<Color> readPCXpalette(const std::string &name);
     std::vector<GobImage> readGOB(const std::string &name);
-    std::vector<Color> readGobImage(const GobImage &gobImage);
+    std::vector<ColorIndex> readGobImage(const GobImage &gobImage);
     std::vector<char> readSMP(const std::string &name);
     std::vector<char> readMOD(const std::string &name);
 
 private:
+    uint16_t readUint16(char *&data);
+    uint32_t readUint32(char *&data);
+
     DATloader m_loader;
 };
 

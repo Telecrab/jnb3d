@@ -67,10 +67,31 @@ std::vector<Color> ResourceContainer::readPCXpalette(const std::string &name)
 
 std::vector<GobImage> ResourceContainer::readGOB(const std::string &name)
 {
+    EntrySize entrySize;
+    char *entryData = m_loader.getEntryData( name, entrySize );
+    char *entryDataBegin = entryData;
+    GobHeader header;
 
+    header.numberOfImages = readUint16(entryData);
+
+    for(int i = 0; i < header.numberOfImages; ++i) {
+        uint32_t value = readUint32(entryData);
+        header.imageOffsets.push_back(value);
+    }
+//    header.imageOffsets.push_back(entrySize); // The GOB end offset
+
+    std::vector<GobImage> gobs;
+    for(int i = 0; i < header.numberOfImages; ++i) {
+        GobImage gobImage;
+//        std::vector<uint8_t>::size_type entrySize = header.imageOffsets[i+1] - header.imageOffsets[i];
+        gobImage.buf_ = reinterpret_cast<const uint8_t*>( &entryDataBegin[ header.imageOffsets[i] ] );
+        gobs.push_back(gobImage);
+    }
+
+    return gobs;
 }
 
-std::vector<Color> ResourceContainer::readGobImage(const GobImage &gobImage)
+std::vector<ColorIndex> ResourceContainer::readGobImage(const GobImage &gobImage)
 {
 
 }
@@ -83,4 +104,22 @@ std::vector<char> ResourceContainer::readSMP(const std::string &name)
 std::vector<char> ResourceContainer::readMOD(const std::string &name)
 {
 
+}
+
+uint16_t ResourceContainer::readUint16(char* &data)
+{
+    uint16_t result;
+    result  = ( uint8_t(*data++) << 0 );
+    result += ( uint8_t(*data++) << 8 );
+    return result;
+}
+
+uint32_t ResourceContainer::readUint32(char* &data)
+{
+    uint32_t result;
+    result  = ( uint8_t(*data++) << 0  );
+    result += ( uint8_t(*data++) << 8  );
+    result += ( uint8_t(*data++) << 16 );
+    result += ( uint8_t(*data++) << 24 );
+    return result;
 }

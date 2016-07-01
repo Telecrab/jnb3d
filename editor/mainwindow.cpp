@@ -125,28 +125,28 @@ QImage MainWindow::readPCXimage(const QString &name)
 
 std::vector<GobImage> MainWindow::readGOB(const QString &name)
 {
-    EntrySize entrySize;
-    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
-    char *entryDataBegin = entryData;
-    GobHeader header;
+//    EntrySize entrySize;
+//    char *entryData = m_datLoader.getEntryData( name.toStdString(), entrySize );
+//    char *entryDataBegin = entryData;
+//    GobHeader header;
 
-    header.numberOfImages = readUint16(entryData);
+//    header.numberOfImages = readUint16(entryData);
 
-    for(int i = 0; i < header.numberOfImages; ++i) {
-        uint32_t value = readUint32(entryData);
-        header.imageOffsets.push_back(value);
-    }
-//    header.imageOffsets.push_back(entrySize); // The GOB end offset
+//    for(int i = 0; i < header.numberOfImages; ++i) {
+//        uint32_t value = readUint32(entryData);
+//        header.imageOffsets.push_back(value);
+//    }
+////    header.imageOffsets.push_back(entrySize); // The GOB end offset
 
-    std::vector<GobImage> gobs;
-    for(int i = 0; i < header.numberOfImages; ++i) {
-        GobImage gobImage;
-//        std::vector<uint8_t>::size_type entrySize = header.imageOffsets[i+1] - header.imageOffsets[i];
-        gobImage.buf_ = reinterpret_cast<const uint8_t*>( &entryDataBegin[ header.imageOffsets[i] ] );
-        gobs.push_back(gobImage);
-    }
+//    std::vector<GobImage> gobs;
+//    for(int i = 0; i < header.numberOfImages; ++i) {
+//        GobImage gobImage;
+////        std::vector<uint8_t>::size_type entrySize = header.imageOffsets[i+1] - header.imageOffsets[i];
+//        gobImage.buf_ = reinterpret_cast<const uint8_t*>( &entryDataBegin[ header.imageOffsets[i] ] );
+//        gobs.push_back(gobImage);
+//    }
 
-    return gobs;
+    return m_resourceContainer.readGOB( name.toStdString() );
 }
 
 QImage MainWindow::readGobImage(const GobImage &gobImage)
