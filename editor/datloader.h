@@ -20,7 +20,7 @@ class DATloader
 public:
     DATloader();
 
-    void loadArchive(const std::string &filename);
+    void loadArchive(const std::string &fileName);
     std::vector<ArchiveEntry> archiveContents();
     char *getEntryData(const std::string & name, EntrySize &size);
 

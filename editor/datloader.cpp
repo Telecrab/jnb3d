@@ -27,12 +27,12 @@ DATloader::DATloader()
 
 }
 
-void DATloader::loadArchive(const std::string &filename)
+void DATloader::loadArchive(const std::string &fileName)
 {
-    QFile level( QString::fromStdString(filename) );
+    QFile level( QString::fromStdString(fileName) );
     level.open(QIODevice::ReadOnly);
     if(!level.isOpen()) {
-        std::string message = "Cannot open '" + filename + "'.";
+        std::string message = "Cannot open '" + fileName + "'.";
         qFatal( message.c_str() );
         return;
     }
