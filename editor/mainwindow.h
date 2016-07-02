@@ -7,7 +7,7 @@
 #include <QGraphicsScene>
 #include <vector>
 
-#include "resourcecontainer.h"
+#include "../lib/resources/resourcecontainer.h"
 
 struct DatEntry
 {
