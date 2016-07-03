@@ -5,9 +5,9 @@ ResourceContainer::ResourceContainer()
 
 }
 
-void ResourceContainer::loadContainer(const std::string &fileName)
+void ResourceContainer::loadContainer(std::shared_ptr<AbstractFileIO> file)
 {
-    m_loader.loadArchive(fileName);
+    m_loader.loadArchive(file);
 }
 
 std::vector<ArchiveEntry> ResourceContainer::containerContents()

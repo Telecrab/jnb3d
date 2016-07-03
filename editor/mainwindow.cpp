@@ -6,6 +6,7 @@
 #include <QWheelEvent>
 
 #include "imageitem.h"
+#include "qtfileio.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -14,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    m_resourceContainer.loadContainer("jumpbump.dat");
+    m_resourceContainer.loadContainer( std::make_shared<QtFileIO>("jumpbump.dat") );
 
     // Reading .dat directory
     std::vector<ArchiveEntry> archiveContents = m_resourceContainer.containerContents();

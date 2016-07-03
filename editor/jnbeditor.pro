@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     micromod/micromod.c \
     graphicresourceview.cpp \
     ../lib/resources/datloader.cpp \
-    ../lib/resources/resourcecontainer.cpp
+    ../lib/resources/resourcecontainer.cpp \
+    ../lib/resources/abstractfileio.cpp \
+    qtfileio.cpp
 
 HEADERS  += \
     mainwindow.h \
@@ -28,7 +30,9 @@ HEADERS  += \
     micromod/micromod.h \
     graphicresourceview.h \
     ../lib/resources/datloader.h \
-    ../lib/resources/resourcecontainer.h
+    ../lib/resources/resourcecontainer.h \
+    ../lib/resources/abstractfileio.h \
+    qtfileio.h
 
 FORMS    += \
     mainwindow.ui \

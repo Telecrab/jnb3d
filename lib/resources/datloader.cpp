@@ -32,8 +32,8 @@ void DATloader::loadArchive(std::shared_ptr<AbstractFileIO> file)
 {
     file->open();
     if(!file->isOpen()) {
-        std::string message = "Cannot open '" + fileName + "'.";
-        qFatal( message.c_str() );
+        std::string message = "Cannot open '" + file->fileName() + "'.";
+//        qFatal( message.c_str() );
         return;
     }
     m_fileData = file->readAll(); // Cashing the file in memory for later use
@@ -45,16 +45,16 @@ void DATloader::loadArchive(std::shared_ptr<AbstractFileIO> file)
     for (int32_t entryNumber = 0; entryNumber < numEntries; entryNumber++)
     {
         ArchiveEntry entry;
-        QByteArray tmp = file->read( sizeof(int8_t) * 12 );
+        std::vector<char> tmp = file->read( sizeof(int8_t) * 12 );
 
         for(int i = tmp.size() - 1; i >= 0; i--) {
-            if( tmp.at(i) != 0 ) {
+            if( tmp[i] != 0 ) {
                 tmp.resize(i + 1);
                 break;
             }
         }
 
-        entry.name = tmp.toStdString();
+        entry.name.assign( tmp.begin(), tmp.end() );
         file->read( reinterpret_cast<char*>(&entry.offset), sizeof(uint32_t) * 2 ); // Offset and size
         m_archiveContents.push_back(entry);
         m_archiveIndex[entry.name] = entryNumber;

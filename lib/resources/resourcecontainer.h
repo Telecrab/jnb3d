@@ -32,7 +32,7 @@ class ResourceContainer
 public:
     ResourceContainer();
 
-    void loadContainer(const std::string &fileName);
+    void loadContainer(std::shared_ptr<AbstractFileIO> file);
     std::vector<ArchiveEntry> containerContents();
 
     std::vector<ColorIndex> readPCXimage(const std::string &name);
