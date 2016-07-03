@@ -4,7 +4,8 @@
 //#include <iterator>
 //#include <iostream>
 //#include <cstdlib>
-#include <QFile>
+
+#include "abstractfileio.h"
 
 DATloader::DATloader()
 {
@@ -27,26 +28,24 @@ DATloader::DATloader()
 
 }
 
-void DATloader::loadArchive(const std::string &fileName)
+void DATloader::loadArchive(std::shared_ptr<AbstractFileIO> file)
 {
-    QFile level( QString::fromStdString(fileName) );
-    level.open(QIODevice::ReadOnly);
-    if(!level.isOpen()) {
+    file->open();
+    if(!file->isOpen()) {
         std::string message = "Cannot open '" + fileName + "'.";
         qFatal( message.c_str() );
         return;
     }
-    std::string data = level.readAll().toStdString(); // Cashing the file in memory for later use
-    m_fileData.assign( data.begin(), data.end() );
-    level.reset();
+    m_fileData = file->readAll(); // Cashing the file in memory for later use
+    file->reset();
 
     // Reading .dat directory
     int32_t numEntries = 0;
-    level.read( reinterpret_cast<char*>(&numEntries), sizeof(int32_t) );
+    file->read( reinterpret_cast<char*>(&numEntries), sizeof(int32_t) );
     for (int32_t entryNumber = 0; entryNumber < numEntries; entryNumber++)
     {
         ArchiveEntry entry;
-        QByteArray tmp = level.read( sizeof(int8_t) * 12 );
+        QByteArray tmp = file->read( sizeof(int8_t) * 12 );
 
         for(int i = tmp.size() - 1; i >= 0; i--) {
             if( tmp.at(i) != 0 ) {
@@ -56,7 +55,7 @@ void DATloader::loadArchive(const std::string &fileName)
         }
 
         entry.name = tmp.toStdString();
-        level.read( reinterpret_cast<char*>(&entry.offset), sizeof(uint32_t) * 2 ); // Offset and size
+        file->read( reinterpret_cast<char*>(&entry.offset), sizeof(uint32_t) * 2 ); // Offset and size
         m_archiveContents.push_back(entry);
         m_archiveIndex[entry.name] = entryNumber;
     }

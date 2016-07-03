@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 using EntryOffset   = uint32_t;
 using EntrySize     = uint32_t;
@@ -15,12 +16,14 @@ struct ArchiveEntry
     EntrySize   size;
 };
 
+class AbstractFileIO;
+
 class DATloader
 {
 public:
     DATloader();
 
-    void loadArchive(const std::string &fileName);
+    void loadArchive(std::shared_ptr<AbstractFileIO> file);
     std::vector<ArchiveEntry> archiveContents();
     char *getEntryData(const std::string & name, EntrySize &size);
 
