@@ -49,6 +49,8 @@ Window::Window(GLuint width, GLuint height, bool fullscreen)
     , m_height(height)
     , m_fullscreen(fullscreen)
     , m_isRunning(true)
+    , m_model(1.0)
+    , m_view(1.0)
     , m_framesRendered(0)
     , m_vsync(false)
 {
@@ -100,6 +102,7 @@ Window::Window(GLuint width, GLuint height, bool fullscreen)
     printf("Vendor:   %s\n", glGetString(GL_VENDOR));
     printf("Renderer: %s\n", glGetString(GL_RENDERER));
     printf("Version:  %s\n", glGetString(GL_VERSION));
+    printf("GLSL Version:  %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     // Use v-sync
     SDL_GL_SetSwapInterval(m_vsync);

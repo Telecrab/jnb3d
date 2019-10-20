@@ -36,7 +36,7 @@ void Sprite::draw(glm::mat4 modelViewProjection)
     glBindTexture(GL_TEXTURE_1D, m_texturePalette);
 
     Frame frame = m_frames[m_animation.value()];
-    m_model = glm::scale( glm::mat4(), glm::vec3(frame.width, frame.height, 1) );
+    m_model = glm::scale( glm::mat4(1.0), glm::vec3(frame.width, frame.height, 1) );
 
     glm::mat4 mvp = modelViewProjection * m_model;
 
@@ -109,6 +109,7 @@ void Sprite::initShader()
                                        "    //color = texelFetch( tex, ivec2(coord.xy), 0 ) / vec4(256.0 ,1.0, 1.0, 1.0);\n"
                                        "    //color = vec4( coord.xy / vec2(13.0, 15.0), 0.0, 1.0 );\n"
                                        "    //color = vec4( float(colorIndex), 0.0, 0.0, 1.0 );\n"
+                                       "    //color = vec4( 1.0, 0.0, 0.0, 1.0 );\n"
                                        "}";
     GLuint fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
