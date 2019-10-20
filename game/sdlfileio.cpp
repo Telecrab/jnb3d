@@ -1,6 +1,6 @@
 #include "sdlfileio.h"
 
-SDLFileIO::SDLFileIO(const std::__cxx11::string &fileName)
+SDLFileIO::SDLFileIO(const std::string &fileName)
     : AbstractFileIO(fileName)
     , m_fileName(fileName)
     , m_isOpen(false)

@@ -42,8 +42,6 @@ private:
     QByteArray m_musicData;
 };
 
-#include "musicwidget.moc" // Because you can't just have Q_OBJECT declared in the *.cpp.
-
 MicromodDevice::MicromodDevice(const QAudioFormat &format)
     : m_format(format),
       m_sampleSize( format.channelCount() * (format.sampleSize() / 8) ),
@@ -282,3 +280,5 @@ void MusicWidget::on_pushButtonStop_clicked()
     ui->sliderSongPosition->setValue(0);
     ui->pushButtonPlayPause->setChecked(false);
 }
+
+#include "musicwidget.moc" // Because you can't just have Q_OBJECT declared in the *.cpp.
